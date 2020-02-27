@@ -13,6 +13,7 @@ namespace KsondzykLab2.ViewModels
 
     internal class ViewModel : INotifyPropertyChanged
     {
+        #region Fields
         private bool _filledName;
         private bool _filledLastName;
         private bool _filledMail;
@@ -28,7 +29,9 @@ namespace KsondzykLab2.ViewModels
         private string _isBirthday;
         private DateTime? _birthday;
         private string _birth;
+        #endregion
 
+        #region Properties
         public DateTime? Birthday
         {
             get => _birthday;
@@ -178,6 +181,7 @@ namespace KsondzykLab2.ViewModels
                 OnPropertyChanged();
             }
         }
+        #endregion
         private bool CanExecute()
         {
             return _filledMail&&_filledBirthday&&_filledLastName&&_filledName;

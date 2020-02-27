@@ -4,6 +4,7 @@ namespace KsondzykLab2.Models
 {
     internal class Person
     {
+        #region Fields
         private string _name;
         private string _lastName;
         private string _mail;
@@ -12,6 +13,7 @@ namespace KsondzykLab2.Models
         public readonly string SunSign;
         public readonly string ChineseSign;
         public readonly string isBirthday;
+        #endregion
         public Person(string name, string lastName, string mail, DateTime? birthday)
         {
             this._name = name;
@@ -19,10 +21,10 @@ namespace KsondzykLab2.Models
             this._mail = mail;
             this._birthday = birthday;
 
+            IsAdult = AdultCalculate();
             isBirthday = BirthdayCalculate();
             SunSign = SunSignCalculate();
             ChineseSign = ChineseSignCalculate();
-            IsAdult = AdultCalculate();
         }
 
         public Person(string name = " ", string lastName = " ", string mail = " ")
@@ -39,10 +41,10 @@ namespace KsondzykLab2.Models
             this._lastName = lastName;
             this._birthday = birthday;
 
+            IsAdult = AdultCalculate();
             isBirthday = BirthdayCalculate();
             SunSign = SunSignCalculate();
             ChineseSign = ChineseSignCalculate();
-            IsAdult = AdultCalculate();
         }
 
         public string LastName
@@ -83,7 +85,8 @@ namespace KsondzykLab2.Models
                 0 => "Monkey",
                 1 => "Rooster",
                 2 => "Dog",
-                3 => "Pig"
+                3 => "Pig",
+                _ => throw new Exception(),
             };
             return result;
         }
@@ -105,6 +108,7 @@ namespace KsondzykLab2.Models
                 12 => (day <= 21 ? "Sagitarius" : "Capricorn"),
                 1 => (day <= 20 ? "Capricorn" : "Aquarius"),
                 2 => (day <= 18 ? "Aquarius" : "Pisces"),
+                _ => throw new Exception(),
             };
             return result;
         }
@@ -126,7 +130,10 @@ namespace KsondzykLab2.Models
             totalDays -= leapDays;
             var years = leapYears + totalDays / 365;
             if (years > 135 || timeSpan.Days < 0)
+            {
                 return "wrong";
+            }
+
             return years >= 18 ? "true":"false";
         }
     }

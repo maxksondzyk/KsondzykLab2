@@ -184,7 +184,7 @@ namespace KsondzykLab2.ViewModels
         #endregion
         private bool CanExecute()
         {
-            return _filledMail&&_filledBirthday&&_filledLastName&&_filledName;
+            return _filledMail&&_filledBirthday&&_filledLastName&& _filledName&&_birthday != null;
         }
         public RelayCommand<object> StartCommand
         {

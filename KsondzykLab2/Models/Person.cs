@@ -1,4 +1,5 @@
 ﻿using System;
+using KsondzykLab2.Tools;
 
 namespace KsondzykLab2.Models
 {
@@ -131,7 +132,7 @@ namespace KsondzykLab2.Models
             var years = leapYears + totalDays / 365;
             if (years > 135 || timeSpan.Days < 0)
             {
-                return "wrong";
+                throw new InvalidDateException("You entered the wrong date");
             }
 
             return years >= 18 ? "true":"false";

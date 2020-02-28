@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using KsondzykLab2.Models;
+using KsondzykLab2.Tools;
 using KsondzykLab2.Tools.Managers;
 using KsondzykLab2.Tools.MVVM;
 
@@ -197,14 +198,32 @@ namespace KsondzykLab2.ViewModels
         
         private async void Calculate(object obj)
         {
-            
             LoaderManager.Instance.ShowLoader();
             await Task.Run(() => Thread.Sleep(2000));
-            _person = new Person(Name,LastName,Mail,Birthday);
             LoaderManager.Instance.HideLoader();
-            if (_person.IsAdult=="wrong")
+            try
             {
-                MessageBox.Show("Incorrect date!");
+                _person = new Person(Name,LastName,Mail,Birthday);
+            
+          
+                
+                    IsAdult = $"Adult: {_person.IsAdult}";
+                    SunSign = $"Your sun sign: {_person.SunSign}";
+                    ChineseSign = $"Your chinese sign: {_person.ChineseSign}";
+                    IsBirthday = $"It's your birthday: {_person.isBirthday}";
+
+                    UserName = $"Your name is {_person.Name}";
+                    UserLastName = $"Your last name is {_person.LastName}";
+                    Birth = $"Your birthday is: {_person.Birthday.Value.ToShortDateString()}";
+                    UserMail = $"Your mail is: {_person.Mail}";
+                    if (_person.Birthday.Value.DayOfYear.Equals(DateTime.Today.DayOfYear))
+                    {
+                        MessageBox.Show("Happy Birthday!");
+                    }
+            }
+            catch (InvalidDateException e)
+            {
+                MessageBox.Show(e.Message);
                 IsAdult = "";
                 SunSign = "";
                 ChineseSign = "";
@@ -213,22 +232,6 @@ namespace KsondzykLab2.ViewModels
                 UserLastName = "";
                 Birth = "";
                 UserMail = "";
-            }
-            else
-            {
-                IsAdult = $"Adult: {_person.IsAdult}";
-                SunSign = $"Your sun sign: {_person.SunSign}";
-                ChineseSign = $"Your chinese sign: {_person.ChineseSign}";
-                IsBirthday = $"It's your birthday: {_person.isBirthday}";
-
-                UserName = $"Your name is {_person.Name}";
-                UserLastName = $"Your last name is {_person.LastName}";
-                Birth = $"Your birthday is: {_person.Birthday.Value.ToShortDateString()}";
-                UserMail = $"Your mail is: {_person.Mail}";
-                if (_person.Birthday.Value.DayOfYear.Equals(DateTime.Today.DayOfYear))
-                {
-                    MessageBox.Show("Happy Birthday!");
-                }
             }
         }
         public event PropertyChangedEventHandler PropertyChanged;

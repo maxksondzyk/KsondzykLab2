@@ -113,7 +113,7 @@ namespace KsondzykLab2.ViewModels
                 OnPropertyChanged();
             }
         }
-        protected string UserName
+        public string UserName
         {
             get => _person.Name;
             set

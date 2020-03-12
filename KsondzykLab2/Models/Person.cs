@@ -6,6 +6,7 @@ namespace KsondzykLab2.Models
     internal class Person
     {
         #region Fields
+
         private string _name;
         private string _lastName;
         private string _mail;
@@ -15,6 +16,7 @@ namespace KsondzykLab2.Models
         public readonly string ChineseSign;
         public readonly string isBirthday;
         #endregion
+
         public Person(string name, string lastName, string mail, DateTime? birthday)
         {
             this._name = name;
@@ -28,25 +30,9 @@ namespace KsondzykLab2.Models
             ChineseSign = ChineseSignCalculate();
         }
 
-        public Person(string name = " ", string lastName = " ", string mail = " ")
-        {
-            this._name = name;
-            this._lastName = lastName;
-            this._mail = mail;
+        public Person(string name = " ", string lastName = " ", string mail = " "):this(name,lastName,mail, DateTime.Today) { }
 
-        }
-
-        public Person(string name, string lastName, DateTime? birthday)
-        {
-            this._name = name;
-            this._lastName = lastName;
-            this._birthday = birthday;
-
-            IsAdult = AdultCalculate();
-            isBirthday = BirthdayCalculate();
-            SunSign = SunSignCalculate();
-            ChineseSign = ChineseSignCalculate();
-        }
+        public Person(string name, string lastName, DateTime? birthday) : this(name, lastName, string.Empty, birthday) { }
 
         public string LastName
         {
@@ -116,7 +102,7 @@ namespace KsondzykLab2.Models
 
         private string BirthdayCalculate()
         {
-            if (DateTime.Today.DayOfYear.Equals(_birthday.Value.DayOfYear))
+            if (_birthday.Value.Day.Equals(DateTime.Today.Day) && _birthday.Value.Month.Equals(DateTime.Today.Month))
                 return "true";
 
             return "false";

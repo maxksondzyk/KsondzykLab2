@@ -15,10 +15,6 @@ namespace KsondzykLab2.ViewModels
     internal class ViewModel : INotifyPropertyChanged
     {
         #region Fields
-        private bool _filledName;
-        private bool _filledLastName;
-        private bool _filledMail;
-        private bool _filledBirthday;
         private RelayCommand<object> _startCommand;
         private Person _person = new Person();
         private string _name;
@@ -39,12 +35,8 @@ namespace KsondzykLab2.ViewModels
             set
             {
                 _birthday = value;
-                if (value != null)
-                {
-                    _birth = value.Value.ToShortDateString();
-                    _filledBirthday = true;
-                }
-                else _filledBirthday = false;
+                if (value != null) _birth = value.Value.ToShortDateString();
+
                 OnPropertyChanged();
             }
         }
@@ -54,9 +46,6 @@ namespace KsondzykLab2.ViewModels
             set
             {
                 _name = value;
-                if (value != "")
-                    _filledName = true;
-                else _filledName = false;
                 OnPropertyChanged();
             }
         }
@@ -66,9 +55,6 @@ namespace KsondzykLab2.ViewModels
             set
             {
                 _lastName = value;
-                if (value != "")
-                    _filledLastName = true;
-                else _filledLastName = false;
                 OnPropertyChanged();
             }
         }
@@ -78,19 +64,13 @@ namespace KsondzykLab2.ViewModels
             set
             {
                 _mail = value;
-                if (value != "")
-                    _filledMail = true;
-                else _filledMail = false;
                 OnPropertyChanged();
             }
         }
 
         public string IsAdult
         {
-            get
-            {
-                return _isAdult;
-            }
+            get => _isAdult;
             set
             {
                 _isAdult = value;
@@ -99,10 +79,7 @@ namespace KsondzykLab2.ViewModels
         }
         public string IsBirthday
         {
-            get
-            {
-                return _isBirthday;
-            }
+            get => _isBirthday;
             set
             {
                 _isBirthday = value;
@@ -111,10 +88,7 @@ namespace KsondzykLab2.ViewModels
         }
         public string SunSign
         {
-            get
-            {
-                return _sunSign;
-            }
+            get => _sunSign;
             set
             {
                 _sunSign = value;
@@ -123,10 +97,7 @@ namespace KsondzykLab2.ViewModels
         }
         public string ChineseSign
         {
-            get
-            {
-                return _chineseSign;
-            }
+            get => _chineseSign;
             set
             {
                 _chineseSign = value;
@@ -135,22 +106,16 @@ namespace KsondzykLab2.ViewModels
         }
         public string UserMail
         {
-            get
-            {
-                return _person.Mail;
-            }
+            get => _person.Mail;
             set
             {
                 _person.Mail = value;
                 OnPropertyChanged();
             }
         }
-        public string UserName
+        protected string UserName
         {
-            get
-            {
-                return _person.Name;
-            }
+            get => _person.Name;
             set
             {
                 _person.Name = value;
@@ -159,23 +124,17 @@ namespace KsondzykLab2.ViewModels
         }
         public string UserLastName
         {
-            get
-            {
-                return _person.LastName;
-            }
+            get => _person.LastName;
             set
             {
                 _person.LastName = value;
                 OnPropertyChanged();
             }
         }
-        
+
         public string Birth
         {
-            get
-            {
-                return _birth;
-            }
+            get => _birth;
             set
             {
                 _birth = value;
@@ -185,7 +144,7 @@ namespace KsondzykLab2.ViewModels
         #endregion
         private bool CanExecute()
         {
-            return _filledMail&&_filledBirthday&&_filledLastName&& _filledName&&_birthday != null;
+            return !string.IsNullOrEmpty(Mail) && !string.IsNullOrEmpty(Birth) && !string.IsNullOrEmpty(LastName) && !string.IsNullOrEmpty(Name);
         }
         public RelayCommand<object> StartCommand
         {
@@ -198,41 +157,38 @@ namespace KsondzykLab2.ViewModels
         
         private async void Calculate(object obj)
         {
-            LoaderManager.Instance.ShowLoader();
-            await Task.Run(() => Thread.Sleep(2000));
-            LoaderManager.Instance.HideLoader();
-            try
-            {
+          try
+          {
+                LoaderManager.Instance.ShowLoader();
                 _person = new Person(Name,LastName,Mail,Birthday);
-            
-          
-                
-                    IsAdult = $"Adult: {_person.IsAdult}";
-                    SunSign = $"Your sun sign: {_person.SunSign}";
-                    ChineseSign = $"Your chinese sign: {_person.ChineseSign}";
-                    IsBirthday = $"It's your birthday: {_person.isBirthday}";
 
-                    UserName = $"Your name is {_person.Name}";
+                await Task.Run(() => IsAdult = $"Adult: {_person.IsAdult}");
+                await Task.Run(() => SunSign = $"Your sun sign: {_person.SunSign}");
+                await Task.Run(() => ChineseSign = $"Your chinese sign: {_person.ChineseSign}");
+                await Task.Run(() => IsBirthday = $"It's your birthday: {_person.isBirthday}");
+                LoaderManager.Instance.HideLoader();
+                UserName = $"Your name is {_person.Name}";
                     UserLastName = $"Your last name is {_person.LastName}";
                     Birth = $"Your birthday is: {_person.Birthday.Value.ToShortDateString()}";
                     UserMail = $"Your mail is: {_person.Mail}";
-                    if (_person.Birthday.Value.DayOfYear.Equals(DateTime.Today.DayOfYear))
+                    if (_person.Birthday.Value.Day.Equals(DateTime.Today.Day)&& _person.Birthday.Value.Month.Equals(DateTime.Today.Month))
                     {
                         MessageBox.Show("Happy Birthday!");
                     }
-            }
-            catch (InvalidDateException e)
-            {
-                MessageBox.Show(e.Message);
-                IsAdult = "";
-                SunSign = "";
-                ChineseSign = "";
-                IsBirthday = "";
-                UserName = "";
-                UserLastName = "";
-                Birth = "";
-                UserMail = "";
-            }
+
+          }
+          catch (InvalidDateException e)
+          {
+              MessageBox.Show(e.Message);
+              IsAdult = "";
+              SunSign = "";
+              ChineseSign = "";
+              IsBirthday = "";
+              UserName = "";
+              UserLastName = "";
+              Birth = "";
+              UserMail = "";
+          }
         }
         public event PropertyChangedEventHandler PropertyChanged;
 

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using KsondzykLab2.Models;
 using KsondzykLab2.Tools;
+using KsondzykLab2.Tools.Exceptions;
 using KsondzykLab2.Tools.Managers;
 using KsondzykLab2.Tools.MVVM;
 
@@ -160,35 +162,57 @@ namespace KsondzykLab2.ViewModels
           try
           {
                 LoaderManager.Instance.ShowLoader();
-                _person = new Person(Name,LastName,Mail,Birthday);
+                await Task.Run(() => _person = new Person(Name,LastName,Mail,Birthday));
 
-                await Task.Run(() => IsAdult = $"Adult: {_person.IsAdult}");
-                await Task.Run(() => SunSign = $"Your sun sign: {_person.SunSign}");
-                await Task.Run(() => ChineseSign = $"Your chinese sign: {_person.ChineseSign}");
-                await Task.Run(() => IsBirthday = $"It's your birthday: {_person.isBirthday}");
-                LoaderManager.Instance.HideLoader();
+                IsAdult = $"Adult: {_person.IsAdult}";
+                SunSign = $"Your sun sign: {_person.SunSign}";
+                ChineseSign = $"Your chinese sign: {_person.ChineseSign}";
+                IsBirthday = $"It's your birthday: {_person.isBirthday}";
                 UserName = $"Your name is {_person.Name}";
                     UserLastName = $"Your last name is {_person.LastName}";
                     Birth = $"Your birthday is: {_person.Birthday.Value.ToShortDateString()}";
-                    UserMail = $"Your mail is: {_person.Mail}";
+                    var rx = new Regex(@"\w+@\w+.\w+",
+                        RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                    var matches = rx.Matches(_person.Mail);
+                    if (matches.Count == 0)
+                    {
+                        throw new InvalidMailException("The mail address is incorrect");
+                    }
+                UserMail = $"Your mail is: {_person.Mail}";
                     if (_person.Birthday.Value.Day.Equals(DateTime.Today.Day)&& _person.Birthday.Value.Month.Equals(DateTime.Today.Month))
                     {
                         MessageBox.Show("Happy Birthday!");
                     }
 
           }
-          catch (InvalidDateException e)
+          catch (InvalidFutureDateException e)
           {
               MessageBox.Show(e.Message);
-              IsAdult = "";
-              SunSign = "";
-              ChineseSign = "";
-              IsBirthday = "";
-              UserName = "";
-              UserLastName = "";
-              Birth = "";
-              UserMail = "";
+              clear();
           }
+          catch (InvalidPastDateException e)
+          {
+              MessageBox.Show(e.Message);
+              clear();
+          }
+          catch (InvalidMailException e)
+          {
+              MessageBox.Show(e.Message);
+              clear();
+          }
+          LoaderManager.Instance.HideLoader();
+        }
+
+        private void clear()
+        {
+            IsAdult = "";
+            SunSign = "";
+            ChineseSign = "";
+            IsBirthday = "";
+            UserName = "";
+            UserLastName = "";
+            Birth = "";
+            UserMail = "";
         }
         public event PropertyChangedEventHandler PropertyChanged;
 

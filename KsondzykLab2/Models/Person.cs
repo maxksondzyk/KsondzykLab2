@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using KsondzykLab2.Tools;
+using KsondzykLab2.Tools.Exceptions;
 
 namespace KsondzykLab2.Models
 {
@@ -23,11 +25,12 @@ namespace KsondzykLab2.Models
             this._lastName = lastName;
             this._mail = mail;
             this._birthday = birthday;
-
+            
             IsAdult = AdultCalculate();
             isBirthday = BirthdayCalculate();
             SunSign = SunSignCalculate();
             ChineseSign = ChineseSignCalculate();
+           
         }
 
         public Person(string name = " ", string lastName = " ", string mail = " "):this(name,lastName,mail, DateTime.Today) { }
@@ -116,9 +119,14 @@ namespace KsondzykLab2.Models
             var totalDays = timeSpan.Days;
             totalDays -= leapDays;
             var years = leapYears + totalDays / 365;
-            if (years > 135 || timeSpan.Days < 0)
+            if (timeSpan.Days < 0)
             {
-                throw new InvalidDateException("You entered the wrong date");
+                throw new InvalidFutureDateException("You haven't been born yet");
+            }
+
+            if (years > 135)
+            {
+                throw new InvalidPastDateException("You are too old to be alive");
             }
 
             return years >= 18 ? "true":"false";

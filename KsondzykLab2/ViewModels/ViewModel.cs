@@ -33,7 +33,7 @@ namespace KsondzykLab2.ViewModels
         #region Properties
         public DateTime? Birthday
         {
-            get => _birthday;
+            private get => _birthday;
             set
             {
                 _birthday = value;
@@ -44,7 +44,7 @@ namespace KsondzykLab2.ViewModels
         }
         public string Name
         {
-            get => _name;
+            private get => _name;
             set
             {
                 _name = value;
@@ -53,7 +53,7 @@ namespace KsondzykLab2.ViewModels
         }
         public string LastName
         {
-            get => _lastName;
+            private get => _lastName;
             set
             {
                 _lastName = value;
@@ -62,7 +62,7 @@ namespace KsondzykLab2.ViewModels
         }
         public string Mail
         {
-            get => _mail;
+            private get => _mail;
             set
             {
                 _mail = value;
@@ -71,9 +71,9 @@ namespace KsondzykLab2.ViewModels
         }
 
         public string IsAdult
-        {
+        { 
             get => _isAdult;
-            set
+            private set
             {
                 _isAdult = value;
                 OnPropertyChanged();
@@ -82,7 +82,7 @@ namespace KsondzykLab2.ViewModels
         public string IsBirthday
         {
             get => _isBirthday;
-            set
+            private set
             {
                 _isBirthday = value;
                 OnPropertyChanged();
@@ -91,7 +91,7 @@ namespace KsondzykLab2.ViewModels
         public string SunSign
         {
             get => _sunSign;
-            set
+            private set
             {
                 _sunSign = value;
                 OnPropertyChanged();
@@ -100,7 +100,7 @@ namespace KsondzykLab2.ViewModels
         public string ChineseSign
         {
             get => _chineseSign;
-            set
+           private set
             {
                 _chineseSign = value;
                 OnPropertyChanged();
@@ -109,7 +109,7 @@ namespace KsondzykLab2.ViewModels
         public string UserMail
         {
             get => _person.Mail;
-            set
+           private set
             {
                 _person.Mail = value;
                 OnPropertyChanged();
@@ -118,7 +118,7 @@ namespace KsondzykLab2.ViewModels
         public string UserName
         {
             get => _person.Name;
-            set
+            private set
             {
                 _person.Name = value;
                 OnPropertyChanged();
@@ -127,7 +127,7 @@ namespace KsondzykLab2.ViewModels
         public string UserLastName
         {
             get => _person.LastName;
-            set
+            private set
             {
                 _person.LastName = value;
                 OnPropertyChanged();
@@ -137,7 +137,7 @@ namespace KsondzykLab2.ViewModels
         public string Birth
         {
             get => _birth;
-            set
+            private set
             {
                 _birth = value;
                 OnPropertyChanged();
@@ -146,7 +146,7 @@ namespace KsondzykLab2.ViewModels
         #endregion
         private bool CanExecute()
         {
-            return !string.IsNullOrEmpty(Mail) && !string.IsNullOrEmpty(Birth) && !string.IsNullOrEmpty(LastName) && !string.IsNullOrEmpty(Name);
+            return !string.IsNullOrEmpty(Mail) && Birthday.HasValue && !string.IsNullOrEmpty(LastName) && !string.IsNullOrEmpty(Name);
         }
         public RelayCommand<object> StartCommand
         {
@@ -169,38 +169,31 @@ namespace KsondzykLab2.ViewModels
                 ChineseSign = $"Your chinese sign: {_person.ChineseSign}";
                 IsBirthday = $"It's your birthday: {_person.isBirthday}";
                 UserName = $"Your name is {_person.Name}";
-                    UserLastName = $"Your last name is {_person.LastName}";
-                    Birth = $"Your birthday is: {_person.Birthday.Value.ToShortDateString()}";
-                    var rx = new Regex(@"\w+@\w+.\w+",
-                        RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                    var matches = rx.Matches(_person.Mail);
-                    if (matches.Count == 0)
-                    {
-                        throw new InvalidMailException("The mail address is incorrect");
-                    }
+                UserLastName = $"Your last name is {_person.LastName}";
+                Birth = $"Your birthday is: {_person.Birthday.Value.ToShortDateString()}";
                 UserMail = $"Your mail is: {_person.Mail}";
-                    if (_person.Birthday.Value.Day.Equals(DateTime.Today.Day)&& _person.Birthday.Value.Month.Equals(DateTime.Today.Month))
-                    {
-                        MessageBox.Show("Happy Birthday!");
-                    }
-
+                LoaderManager.Instance.HideLoader();
+                if (_person.Birthday.Value.Day.Equals(DateTime.Today.Day)&& _person.Birthday.Value.Month.Equals(DateTime.Today.Month))
+                {
+                    MessageBox.Show("Happy Birthday!");
+                }
+                   
           }
           catch (InvalidFutureDateException e)
           {
-              MessageBox.Show(e.Message);
               clear();
+              MessageBox.Show(e.Message);
           }
           catch (InvalidPastDateException e)
           {
-              MessageBox.Show(e.Message);
               clear();
+              MessageBox.Show(e.Message);
           }
           catch (InvalidMailException e)
           {
-              MessageBox.Show(e.Message);
               clear();
+              MessageBox.Show(e.Message);
           }
-          LoaderManager.Instance.HideLoader();
         }
 
         private void clear()
@@ -213,6 +206,7 @@ namespace KsondzykLab2.ViewModels
             UserLastName = "";
             Birth = "";
             UserMail = "";
+            LoaderManager.Instance.HideLoader();
         }
         public event PropertyChangedEventHandler PropertyChanged;
 

@@ -35,7 +35,7 @@ namespace KsondzykLab2.Models
 
         public Person(string name = " ", string lastName = " ", string mail = " "):this(name,lastName,mail, DateTime.Today) { }
 
-        public Person(string name, string lastName, DateTime? birthday) : this(name, lastName, string.Empty, birthday) { }
+        public Person(string name, string lastName, DateTime? birthday) : this(name, lastName, "no@email.address", birthday) { }
 
         public string LastName
         {
@@ -51,7 +51,17 @@ namespace KsondzykLab2.Models
 
         public string Mail
         {
-            get => _mail;
+            get
+            {
+                var rx = new Regex(@"\w+@\w+.\w+",
+                    RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                var matches = rx.Matches(_mail);
+                if (matches.Count == 0)
+                {
+                    throw new InvalidMailException("The mail address is incorrect");
+                }
+                return _mail;
+            }
             set => _mail = value;
         }
 
@@ -113,7 +123,7 @@ namespace KsondzykLab2.Models
 
         private string AdultCalculate()
         {
-            var leapYears = (DateTime.Now.Year - this._birthday.Value.Year) / 4;
+            var leapYears = (DateTime.Now.Year - _birthday.Value.Year) / 4;
             var leapDays = leapYears * 366;
             var timeSpan = (DateTime.Today - _birthday.Value.Date);
             var totalDays = timeSpan.Days;

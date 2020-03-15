@@ -4,7 +4,7 @@ using System.Text;
 
 namespace KsondzykLab2.Tools.Exceptions
 {
-    class InvalidPastDateException : ArgumentException
+    internal class InvalidPastDateException : ArgumentException
     {
         internal InvalidPastDateException(string message) : base(message)
         {

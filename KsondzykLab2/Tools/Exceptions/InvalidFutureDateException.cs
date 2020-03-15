@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace KsondzykLab2.Tools
+namespace KsondzykLab2.Tools.Exceptions
 {
     internal class InvalidFutureDateException : ArgumentException
     {
